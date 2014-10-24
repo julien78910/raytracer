@@ -5,20 +5,21 @@
 # include <stdlib.h>
 # include "vector3.h"
 
-struct screen
+
+typedef struct screen
 {
   size_t width;
   size_t height;
-} typedef s_screen;
+} s_screen;
 
-struct camera
+typedef struct camera
 {
   s_vec3 pos;
   s_vec3 u;
   s_vec3 v;
-} typedef s_camera;
+} s_camera;
 
-struct sphere
+typedef struct sphere
 {
   float radius;
   s_vec3 pos;
@@ -32,9 +33,9 @@ struct sphere
   float color_g;
   float color_b;
   struct sphere *next;
-} typedef s_sphere;
+} s_sphere;
 
-struct plane
+typedef struct plane
 {
   float a;
   float b;
@@ -50,9 +51,9 @@ struct plane
   float color_g;
   float color_b;
   struct plane *next;
-} typedef s_plane;
+} s_plane;
 
-struct triangle
+typedef struct triangle
 {
   s_vec3 a;
   s_vec3 b;
@@ -67,35 +68,35 @@ struct triangle
   float color_g;
   float color_b;
   struct triangle *next;
-} typedef s_triangle;
+} s_triangle;
 
-struct plight
+typedef struct plight
 {
   s_vec3 pos;
   float color_r;
   float color_g;
   float color_b;
   struct plight *next;
-} typedef s_plight;
+} s_plight;
 
-struct dlight
+typedef struct dlight
 {
   s_vec3 dir;
   float color_r;
   float color_g;
   float color_b;
   struct dlight *next;
-} typedef s_dlight;
+} s_dlight;
 
-struct alight
+typedef struct alight
 {
   float color_r;
   float color_g;
   float color_b;
   struct dlight *next;
-} typedef s_alight;
+} s_alight;
 
-struct scene
+typedef struct scene
 {
   s_screen screen;
   s_camera camera;
@@ -105,6 +106,6 @@ struct scene
   s_plight *plight;
   s_dlight *dlight;
   s_alight *alight;
-} typedef s_scene;
+} s_scene;
 
 #endif /* !DATA_H */
