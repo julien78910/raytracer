@@ -83,7 +83,7 @@ s_sphere *fill_sphere(s_scene *sc, char **saveptr)
   if (sp)
     sp->next = new;
   else
-    sp = new;
+    return new;
   return sc->sphere;
 }
 
