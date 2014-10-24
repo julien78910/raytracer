@@ -1,9 +1,6 @@
 #ifndef VECTOR3_H
 # define VECTOR3_H
 
-# include <stdio.h>
-# include <stdlib.h>
-
 typedef struct vector3
 {
   float x;

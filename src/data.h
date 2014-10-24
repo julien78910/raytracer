@@ -8,8 +8,8 @@
 
 typedef struct screen
 {
-  size_t width;
-  size_t height;
+  int width;
+  int height;
 } s_screen;
 
 typedef struct camera

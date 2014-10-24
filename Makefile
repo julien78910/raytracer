@@ -1,13 +1,14 @@
 CC=gcc
 CFLAGS= -std=c99 -pedantic -Werror -Wall -Wextra
 BIN=rt
-SRC=src/raytracer.c src/vector3.c src/vector3bis.c
+SRC=src/raytracer.c src/vector3.c src/vector3bis.c src/parser.c
 OBJS=$(SRC:.c=.o)
+LDFLAGS=-lm
 
 all: release 
 
 release: $(OBJS)
-	$(CC) $(BIN) -o $@
+	$(CC) $^ -o $(BIN) $(LDFLAGS)
 
 debug: CFLAGS += -g3 -ggdb
 

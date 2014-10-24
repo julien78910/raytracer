@@ -1,6 +1,6 @@
-#include <stdio.h>
-#include "vector3.h"
 #include <math.h>
+#include <stdlib.h>
+#include "vector3.h"
 
 s_vec3 normalize(s_vec3 v)
 {
