@@ -5,7 +5,7 @@ SRC=src/raytracer.c src/vector3.c src/vector3bis.c src/parser.c
 OBJS=$(SRC:.c=.o)
 LDFLAGS=-lm
 
-all: release 
+all: release
 
 release: $(OBJS)
 	$(CC) $^ -o $(BIN) $(LDFLAGS)

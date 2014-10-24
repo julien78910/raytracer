@@ -39,13 +39,13 @@ static s_camera fill_camera(char **saveptr)
   bf = strtok_r(NULL, " ", saveptr);
   came.v.z = strtof(bf, NULL);
   return came;
- }
+}
 
 s_sphere *fill_sphere(s_scene *sc, char **saveptr)
 {
   s_sphere *sp = sc->sphere;
   char *bf = strtok_r(NULL, " ", saveptr);
-  if (sp)
+  if (sc->sphere)
   {
     while (sp->next)
       sp = sp->next;
@@ -73,6 +73,7 @@ s_sphere *fill_sphere(s_scene *sc, char **saveptr)
   s_color col;
   bf = strtok_r(NULL, " ", saveptr);
   col.r =  strtof(bf, NULL);
+
   bf = strtok_r(NULL, " ", saveptr);
   col.g =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
@@ -90,16 +91,25 @@ s_scene *parse(char *filename)
 {
   FILE *f = fopen(filename, "r");
   s_scene *scene = malloc(sizeof (s_scene));
-  int size = 500;
-  char *buf = malloc(size * sizeof (char));
+  scene->sphere = NULL;
+  int size = 1000;
+  char *buf = malloc(1000);;
   buf = fgets(buf, size, f);
+
+
   while (buf)
   {
-    char **saveptr = NULL;
+    char **saveptr = malloc(1000);;
+
+
     char *type = strtok_r(buf, " ", saveptr);
+
+
     if (!strcmp(type, "screen"))
     {
       scene->screen = fill_screen(saveptr);
+
+
     }
     else if (!strcmp(type, "camera"))
     {
@@ -130,6 +140,8 @@ s_scene *parse(char *filename)
 
     }
     buf = fgets(buf, size, f);
+
+
   }
 
   fclose(f);
