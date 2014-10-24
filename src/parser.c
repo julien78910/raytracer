@@ -40,7 +40,7 @@ static s_camera fill_camera(char **saveptr)
   return came;
  }
 
-s_sphere fill_sphere(s_scene sc, char **saveptr)
+s_sphere fill_sphere(s_scene *sc, char **saveptr)
 {
   s_phere *sp = sc->sphere;
   char *bf = strtok_r(NULL, " ", saveptr);
@@ -48,29 +48,40 @@ s_sphere fill_sphere(s_scene sc, char **saveptr)
   {
     while (sp->next)
       sp = sp->next;
-    s_sphere *new = malloc(sizeof (s_sphere));
-    new->radius = strtof(bf, NULL);
-    bf = strtok_r(NULL, " ", saveptr);
-    new->pos.x =  strtof(bf, NULL);
-    bf = strtok_r(NULL, " ", saveptr);
-    new->pos.y =  strtof(bf, NULL);
-    bf = strtok_r(NULL, " ", saveptr);
-    new->pos.z =  strtof(bf, NULL);
-    bf = strtok_r(NULL, " ", saveptr);
-    new->diff =  strtof(bf, NULL);
- bf = strtok_r(NULL, " ", saveptr);
-    new->refl =  strtof(bf, NULL);
- bf = strtok_r(NULL, " ", saveptr);
-    new->spec =  strtof(bf, NULL);
- bf = strtok_r(NULL, " ", saveptr);
-    new->shin =  strtof(bf, NULL);
- bf = strtok_r(NULL, " ", saveptr);
-    new->refr =  strtof(bf, NULL);
- bf = strtok_r(NULL, " ", saveptr);
-    new->opac =  strtof(bf, NULL);
-
-
   }
+  s_sphere *new = malloc(sizeof (s_sphere));
+  new->radius = strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  new->pos.x =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  new->pos.y =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  new->pos.z =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  new->diff =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  new->refl =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  new->spec =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  new->shin =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  new->refr =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  new->opac =  strtof(bf, NULL);
+  s_color col;
+  bf = strtok_r(NULL, " ", saveptr);
+  col.r =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  col.g =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  col.b =  strtof(bf, NULL);
+
+  new->next = NULL;
+  if (sp)
+    sp->next = new;
+  else
+    sp = new;
   return sc->sphere;
 }
 
