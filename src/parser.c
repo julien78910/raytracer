@@ -1,3 +1,4 @@
+#define _BSD_SOURCE
 #include "parser.h"
 #include "data.h"
 #include "vector3.h"
@@ -40,9 +41,9 @@ static s_camera fill_camera(char **saveptr)
   return came;
  }
 
-s_sphere fill_sphere(s_scene *sc, char **saveptr)
+s_sphere *fill_sphere(s_scene *sc, char **saveptr)
 {
-  s_phere *sp = sc->sphere;
+  s_sphere *sp = sc->sphere;
   char *bf = strtok_r(NULL, " ", saveptr);
   if (sp)
   {
@@ -76,7 +77,7 @@ s_sphere fill_sphere(s_scene *sc, char **saveptr)
   col.g =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
   col.b =  strtof(bf, NULL);
-
+  new->color = col;
   new->next = NULL;
   if (sp)
     sp->next = new;
@@ -87,7 +88,7 @@ s_sphere fill_sphere(s_scene *sc, char **saveptr)
 
 s_scene *parse(char *filename)
 {
-  FILE *f = fopen(filename, r);
+  FILE *f = fopen(filename, "r");
   s_scene *scene = malloc(sizeof (s_scene));
   int size = 500;
   char *buf = malloc(size * sizeof (char));
