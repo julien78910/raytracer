@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-s_scene parse(char *filename)
+s_scene *parse(char *filename)
 {
-  s_scene scene;
+  s_scene *scene = NULL;
   filename = filename;
   return scene;
 }

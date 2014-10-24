@@ -5,7 +5,7 @@
 # include <stdlib.h>
 # include "data.h"
 
-s_scene parse(char *filename);
+s_scene *parse(char *filename);
 
 #endif /* !PARSER_H */
 
