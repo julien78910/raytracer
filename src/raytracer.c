@@ -37,8 +37,49 @@ void ray_tracer(s_scene *scene)
       point.y = center.y + h * (vec_u.y + vec_v.y);
       point.z = center.z;
 
-      s_vec3 out = compute(cam.pos, point);
-      out = out;
+      s_vec3 dir = compute(cam.pos, point);
+      
+      s_vec3 intersec = find_intersec(dir, scene, point);
+      intersec = intersec;
     }
   }
+}
+
+s_vec3 find_intersec(s_vec3 dir, s_scene *scene, s_vec3 point)
+{
+  s_sphere obj;
+  s_vec3 cam = scene->camera.pos;
+
+  float a = dot_prod(dir, dir);
+  float b = dot_prod(scale(dir, 2), add(cam, scale(obj.pos, -1)));
+  float c = pow(distance(cam, scale(obj.pos, -1)), 2) - pow(obj.radius, 2);
+
+  float delta = b * b - 4 * a * c;
+
+  if (delta < 0)
+    return cam;
+
+  float t0 = (-b - sqrt(delta)) / (2 * a);
+  float t1 = (-b + sqrt(delta)) / (2 * a);
+  
+  s_vec3 p0 = add(cam, scale(dir, t0));
+  s_vec3 p1 = add(cam, scale(dir, t1));
+
+  s_vec3 result = p0;
+  s_vec3 aux = p1;
+
+  if (distance(p0, point) > distance(p1, point))
+  {
+    result = p1;
+    aux = p0;
+  }
+  
+  if (dot_prod(point, result) < 0)
+  {
+    result = aux;
+    if (dot_prod(point, result) < 0)
+      return cam;
+  }
+
+  return result;
 }

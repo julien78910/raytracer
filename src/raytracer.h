@@ -2,5 +2,6 @@
 # define RAY_TRACER_H
 
 void ray_tracer(s_scene *scene);
+s_vec3 find_intersec(s_vec3 dir, s_scene *scene, s_vec3 point);
 
 #endif /* !RAY_TRACER_H */
