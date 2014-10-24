@@ -9,14 +9,14 @@ struct screen
 {
   size_t width;
   size_t height;
-} s_screen;
+} typedef s_screen;
 
 struct camera
 {
   s_vec3 pos;
   s_vec3 u;
   s_vec3 v;
-} s_camera;
+} typedef s_camera;
 
 struct sphere
 {
@@ -32,7 +32,7 @@ struct sphere
   float color_g;
   float color_b;
   struct sphere *next;
-} s_sphere;
+} typedef s_sphere;
 
 struct plane
 {
@@ -50,7 +50,7 @@ struct plane
   float color_g;
   float color_b;
   struct plane *next;
-} s_plane;
+} typedef s_plane;
 
 struct triangle
 {
@@ -67,7 +67,7 @@ struct triangle
   float color_g;
   float color_b;
   struct triangle *next;
-} s_triangle;
+} typedef s_triangle;
 
 struct plight
 {
@@ -76,7 +76,7 @@ struct plight
   float color_g;
   float color_b;
   struct plight *next;
-} s_plight;
+} typedef s_plight;
 
 struct dlight
 {
@@ -85,7 +85,7 @@ struct dlight
   float color_g;
   float color_b;
   struct dlight *next;
-} s_dlight;
+} typedef s_dlight;
 
 struct alight
 {
@@ -93,7 +93,7 @@ struct alight
   float color_g;
   float color_b;
   struct dlight *next;
-} s_alight;
+} typedef s_alight;
 
 struct scene
 {
@@ -105,6 +105,6 @@ struct scene
   s_plight *plight;
   s_dlight *dlight;
   s_alight *alight;
-} s_scene;
+} typedef s_scene;
 
 #endif /* !DATA_H */
