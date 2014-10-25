@@ -59,17 +59,17 @@ s_sphere *fill_sphere(s_scene *sc, char **saveptr)
   bf = strtok_r(NULL, " ", saveptr);
   new->pos.z =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->diff =  strtof(bf, NULL);
+  new->spe.diff =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->refl =  strtof(bf, NULL);
+  new->spe.refl =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->spec =  strtof(bf, NULL);
+  new->spe.spec =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->shin =  strtof(bf, NULL);
+  new->spe.shin =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->refr =  strtof(bf, NULL);
+  new->spe.refr =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->opac =  strtof(bf, NULL);
+  new->spe.opac =  strtof(bf, NULL);
   s_color col;
   bf = strtok_r(NULL, " ", saveptr);
   col.r =  strtof(bf, NULL);
@@ -77,7 +77,7 @@ s_sphere *fill_sphere(s_scene *sc, char **saveptr)
   col.g =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
   col.b =  strtof(bf, NULL);
-  new->color = col;
+  new->spe.color = col;
   new->next = NULL;
   if (sp)
     sp->next = new;
@@ -114,17 +114,17 @@ s_triangle *fill_triangle(s_scene *sc, char **saveptr)
   bf = strtok_r(NULL, " ", saveptr);
   new->c.z =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->diff =  strtof(bf, NULL);
+  new->spe.diff =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->refl =  strtof(bf, NULL);
+  new->spe.refl =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->spec =  strtof(bf, NULL);
+  new->spe.spec =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->shin =  strtof(bf, NULL);
+  new->spe.shin =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->refr =  strtof(bf, NULL);
+  new->spe.refr =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->opac =  strtof(bf, NULL);
+  new->spe.opac =  strtof(bf, NULL);
   s_color col;
   bf = strtok_r(NULL, " ", saveptr);
   col.r =  strtof(bf, NULL);
@@ -132,7 +132,7 @@ s_triangle *fill_triangle(s_scene *sc, char **saveptr)
   col.g =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
   col.b =  strtof(bf, NULL);
-  new->color = col;
+  new->spe.color = col;
   new->next = NULL;
   if (sp)
     sp->next = new;
@@ -159,17 +159,17 @@ s_plane *fill_plane(s_scene *sc, char **saveptr)
   bf = strtok_r(NULL, " ", saveptr);
   new->d =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->diff =  strtof(bf, NULL);
+  new->spe.diff =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->refl =  strtof(bf, NULL);
+  new->spe.refl =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->spec =  strtof(bf, NULL);
+  new->spe.spec =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->shin =  strtof(bf, NULL);
+  new->spe.shin =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->refr =  strtof(bf, NULL);
+  new->spe.refr =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
-  new->opac =  strtof(bf, NULL);
+  new->spe.opac =  strtof(bf, NULL);
   s_color col;
   bf = strtok_r(NULL, " ", saveptr);
   col.r =  strtof(bf, NULL);
@@ -177,7 +177,7 @@ s_plane *fill_plane(s_scene *sc, char **saveptr)
   col.g =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
   col.b =  strtof(bf, NULL);
-  new->color = col;
+  new->spe.color = col;
   new->next = NULL;
   if (sp)
     sp->next = new;

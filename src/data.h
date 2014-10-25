@@ -12,6 +12,17 @@ typedef struct color
   float b;
 } s_color;
 
+typedef struct spe
+{
+  float  diff;
+  float  refl;
+  float  spec;
+  float  shin;
+  float  refr;
+  float  opac;
+  s_color color;
+} s_spe;
+
 typedef struct screen
 {
   int width;
@@ -19,6 +30,7 @@ typedef struct screen
 } s_screen;
 
 typedef struct camera
+
 {
   s_vec3 pos;
   s_vec3 u;
@@ -29,13 +41,7 @@ typedef struct sphere
 {
   float radius;
   s_vec3 pos;
-  float  diff;
-  float  refl;
-  float  spec;
-  float  shin;
-  float  refr;
-  float  opac;
-  s_color color;
+  s_spe spe;
   struct sphere *next;
 } s_sphere;
 
@@ -45,13 +51,7 @@ typedef struct plane
   float b;
   float c;
   float d;
-  float diff;
-  float refl;
-  float spec;
-  float shin;
-  float refr;
-  float opac;
-  s_color color;
+  s_spe spe;
   struct plane *next;
 } s_plane;
 
@@ -60,13 +60,7 @@ typedef struct triangle
   s_vec3 a;
   s_vec3 b;
   s_vec3 c;
-  float diff;
-  float refl;
-  float spec;
-  float shin;
-  float refr;
-  float opac;
-  s_color color;
+  s_spe spe;
   struct triangle *next;
 } s_triangle;
 
