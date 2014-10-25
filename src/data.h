@@ -87,7 +87,7 @@ typedef struct dlight
 typedef struct alight
 {
   s_color color;
-  struct dlight *next;
+  struct alight *next;
 } s_alight;
 
 typedef struct scene
