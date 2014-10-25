@@ -16,16 +16,6 @@ int main(int argc, char *argv[])
 
   s_color **output = ray_tracer(scene);
 
-/*  for (int i = 0; i < scene->screen.height; i++)
-  {
-    for (int j = 0; j < scene->screen.width; j++)
-      printf("%d %d %d  ", (int)output[j][i].r, (int)output[j][i].g, (int)output[j][i].b);
-    printf("\n");
-  }
-  if (output)
-    return 1;
-*/
-
   display(argv[2], output, scene->screen);
 
   return 0;
@@ -39,9 +29,6 @@ s_color **ray_tracer(s_scene *scene)
   s_vec3 vec_u = normalize(cam.u);
   s_vec3 vec_v = normalize(cam.v);
   s_vec3 vec_w = cross_prod(vec_u, vec_v);
-
-  //printf("P3\n");
-  //printf("%d %d\n255\n", screen.width, screen.height);
 
   float dist_l = (screen.width / 2) / tan(45.f / 2.f);
   s_vec3 center = add(cam.pos, scale(vec_w, dist_l));
@@ -60,66 +47,114 @@ s_color **ray_tracer(s_scene *scene)
       point.y = center.y + h * (vec_u.y + vec_v.y);
       point.z = center.z;
 
-      s_vec3 dir = compute(cam.pos, point);
-
-      s_sphere *aux = scene->sphere;
-      s_sphere *closest = aux;
-      s_vec3 closest_inter = sphere_intersec(dir, scene->camera.pos, point, aux);
-      s_color color;
-      color.r = 0;
-      color.g = 0;
-      color.b = 0;
-
-      while (aux != NULL)
-      {
-        s_vec3 intersec = sphere_intersec(dir, scene->camera.pos, point, aux);
-     
-        if (distance(intersec, point) < distance(closest_inter, point))
-        {
-          closest = aux;
-          closest_inter = intersec;
-        }
-        aux = aux->next;
-      }
-
-      if (closest_inter.x != cam.pos.x || closest_inter.y != cam.pos.y
-          || closest_inter.z != cam.pos.z)
-      {
-        //s_vec3 norm;
-        //norm.x = closest->a;
-        //norm.y = closest->b;
-        //norm.z = closest->c;
-
-        s_vec3 norm = compute(closest->pos, closest_inter);
-        s_color dir_color = dir_light(scene->dlight, closest->spe, norm);
-        s_color point_color = point_light(scene->plight, closest->spe, closest_inter, norm);
-        s_color amb_color = ambient_light(scene->alight, closest->spe);
-
-        color.r = amb_color.r + dir_color.r + point_color.r;
-        color.g = amb_color.g + dir_color.g + point_color.g;
-        color.b = amb_color.b + dir_color.b + point_color.b;
-      }
-
+      s_color color = pixel_color(scene, point);
       output[w + screen.width / 2][h + screen.height / 2] = color;
-
     }
   }
 
   return output;
 }
 
-/*
-void pixel_color(s_scene *scene)
+
+s_color pixel_color(s_scene *scene, s_vec3 pixel)
 {
+  s_vec3 dir = compute(scene->camera.pos, pixel);
   s_sphere *sphere = scene->sphere;
   s_plane *plane = scene->plane;
   s_triangle *triangle = scene->triangle;
 
-  s_vec3 clos_sphere = sphere_intersec(dir, scene->camera.pos, point, sphere);
+  s_sphere *sp = scene->sphere;
+  s_plane *pl = scene->plane;
+  s_triangle *tr = scene->triangle;
+
+  s_vec3 clos_sphere = sphere_intersec(dir, scene->camera.pos, pixel, sphere);
   s_vec3 clos_plane = plane_intersec(dir, scene->camera.pos, plane);
   s_vec3 clos_triangle = triangle_intersec(dir, scene->camera.pos, triangle);
+
+  while (sp != NULL)
+  {
+    s_vec3 intersec = sphere_intersec(dir, scene->camera.pos, pixel, sp);
+
+    if (!is_equal(intersec, scene->camera.pos)
+        && distance(intersec, pixel) < distance(clos_sphere, pixel))
+    {
+      sphere = sp;
+      clos_sphere = intersec;
+    }
+    sp = sp->next;
+  }
+
+  while (pl != NULL)
+  {
+    s_vec3 intersec = plane_intersec(dir, scene->camera.pos, pl);
+
+    if (!is_equal(intersec, scene->camera.pos)
+        && distance(intersec, pixel) < distance(clos_plane, pixel))
+    {
+      plane = pl;
+      clos_plane = intersec;
+    }
+    pl = pl->next;
+  }
+
+  while (tr != NULL)
+  {
+    s_vec3 intersec = triangle_intersec(dir, scene->camera.pos, tr);
+
+    if (!is_equal(intersec, scene->camera.pos)
+        && distance(intersec, pixel) < distance(clos_triangle, pixel))
+    {
+      triangle = tr;
+      clos_triangle = intersec;
+    }
+    tr = tr->next;
+  }
+
+  float dist_triangle = distance(clos_triangle, pixel);
+  float dist_plane = distance(clos_plane, pixel);
+  float dist_sphere = distance(clos_sphere, pixel);
+
+  s_spe spe;
+  s_vec3 normal;
+  s_vec3 closest_inter;
+
+  if (dist_sphere < dist_triangle && dist_sphere < dist_plane)
+  {
+    spe = sphere->spe;
+    closest_inter = clos_sphere;
+    normal = compute(sphere->pos, clos_sphere);
+  }
+  else if (dist_plane < dist_sphere && dist_plane < dist_triangle)
+  {
+    spe = plane->spe;
+    closest_inter = clos_plane;
+    normal.x = plane->a;
+    normal.y = plane->b;
+    normal.z = plane->c;
+
+  }
+  else
+  {
+    spe = triangle->spe;
+    closest_inter = clos_triangle;
+    s_vec3 vec_ab = compute(triangle->a, triangle->b);
+    s_vec3 vec_ac = compute(triangle->a, triangle->c);
+    normal = cross_prod(vec_ab, vec_ac);
+  }
+
+
+  s_color dir_color = dir_light(scene->dlight, spe, normal);
+  s_color point_color = point_light(scene->plight, spe, closest_inter, normal);
+  s_color amb_color = ambient_light(scene->alight, spe);
+
+  s_color color;
+  color.r = amb_color.r + dir_color.r + point_color.r;
+  color.g = amb_color.g + dir_color.g + point_color.g;
+  color.b = amb_color.b + dir_color.b + point_color.b;
+
+  return color;
 }
-*/
+
 
 s_vec3 triangle_intersec(s_vec3 dir, s_vec3 ray_pos, s_triangle *triangle)
 {
