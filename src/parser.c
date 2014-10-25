@@ -265,6 +265,21 @@ s_alight *fill_alight(s_scene *sc, char **saveptr)
 }
 
 /**
+** Initialize a new scene with all his value declared to NULL.
+*/
+static s_scene *init_scene(void)
+{
+  s_scene *scene = malloc(sizeof (s_scene));
+  scene->sphere = NULL;
+  scene->plane = NULL;
+  scene->triangle = NULL;
+  scene->plight = NULL;
+  scene->dlight = NULL;
+  scene->alight = NULL;
+  return scene;
+}
+
+/**
 ** Main function of parsing the file name "pathname".
 ** This file must be correct.
 ** It will fill all the struct that the input wants.
@@ -272,13 +287,12 @@ s_alight *fill_alight(s_scene *sc, char **saveptr)
 s_scene *parse(char *filename)
 {
   FILE *f = fopen(filename, "r");
-  s_scene *scene = malloc(sizeof (s_scene));
-  int size = 256;
-  char *buf = malloc(size);;
+  s_scene *scene = init_scene();
+  char *buf = malloc(256);
 
-  for (buf = fgets(buf, size, f); buf; buf = fgets(buf, size, f))
+  for (buf = fgets(buf, 256, f); buf; buf = fgets(buf, 256, f))
   {
-    char **saveptr = malloc(size);
+    char **saveptr = malloc(256);
     char *type = strtok_r(buf, " ", saveptr);
     if (!strcmp(type, "screen"))
       scene->screen = fill_screen(saveptr);
@@ -296,8 +310,8 @@ s_scene *parse(char *filename)
       scene->dlight = fill_dlight(scene, saveptr);
     else if (!strcmp(type, "alight"))
       scene->alight = fill_alight(scene, saveptr);
+    free(saveptr);
   }
-
   fclose(f);
   return scene;
 }

@@ -24,3 +24,11 @@ s_vec3 compute(s_vec3 d1, s_vec3 d2)
   new.z = d2.z - d1.z;
   return new;
 }
+
+int is_equal(s_vec3 v1, s_vec3 v2)
+{
+  if ((v1.x == v2.x) && (v1.y == v2.y) && (v1.z == v2.z))
+    return 1;
+  else
+    return 0;
+}
