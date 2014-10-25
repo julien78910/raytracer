@@ -117,14 +117,20 @@ s_color pixel_color(s_scene *scene, s_vec3 pixel)
   s_spe spe;
   s_vec3 normal;
   s_vec3 closest_inter;
+  s_color color;
+  color.r = 0;
+  color.g = 0;
+  color.b = 0;
 
-  if (dist_sphere < dist_triangle && dist_sphere < dist_plane)
+  if (sphere != NULL && dist_sphere < dist_triangle && dist_sphere < dist_plane)
   {
     spe = sphere->spe;
     closest_inter = clos_sphere;
     normal = compute(sphere->pos, clos_sphere);
   }
-  else if (dist_plane < dist_sphere && dist_plane < dist_triangle)
+
+  else if (plane != NULL
+      && dist_plane < dist_sphere && dist_plane < dist_triangle)
   {
     spe = plane->spe;
     closest_inter = clos_plane;
@@ -133,7 +139,7 @@ s_color pixel_color(s_scene *scene, s_vec3 pixel)
     normal.z = plane->c;
 
   }
-  else
+  else if (triangle != NULL)
   {
     spe = triangle->spe;
     closest_inter = clos_triangle;
@@ -141,13 +147,13 @@ s_color pixel_color(s_scene *scene, s_vec3 pixel)
     s_vec3 vec_ac = compute(triangle->a, triangle->c);
     normal = cross_prod(vec_ab, vec_ac);
   }
-
+  else
+    return color;
 
   s_color dir_color = dir_light(scene->dlight, spe, normal);
   s_color point_color = point_light(scene->plight, spe, closest_inter, normal);
   s_color amb_color = ambient_light(scene->alight, spe);
 
-  s_color color;
   color.r = amb_color.r + dir_color.r + point_color.r;
   color.g = amb_color.g + dir_color.g + point_color.g;
   color.b = amb_color.b + dir_color.b + point_color.b;
@@ -158,6 +164,9 @@ s_color pixel_color(s_scene *scene, s_vec3 pixel)
 
 s_vec3 triangle_intersec(s_vec3 dir, s_vec3 ray_pos, s_triangle *triangle)
 {
+  if (triangle == NULL)
+    return ray_pos;
+
   s_vec3 vec_ab = compute(triangle->a, triangle->b);
   s_vec3 vec_ac = compute(triangle->a, triangle->c);
 
@@ -190,7 +199,10 @@ s_vec3 triangle_intersec(s_vec3 dir, s_vec3 ray_pos, s_triangle *triangle)
 
 s_vec3 plane_intersec(s_vec3 dir, s_vec3 ray_pos, s_plane *plane)
 {
-  float denum = plane->a * dir.x + plane->b * dir.x + plane->c * dir.x;
+  if (plane == NULL)
+    return ray_pos;
+
+  float denum = plane->a * dir.x + plane->b * dir.y + plane->c * dir.z;
 
   if (denum == 0)
     return ray_pos;
@@ -210,6 +222,9 @@ s_vec3 plane_intersec(s_vec3 dir, s_vec3 ray_pos, s_plane *plane)
 s_vec3 sphere_intersec(s_vec3 dir, s_vec3 ray_pos,
     s_vec3 intersec, s_sphere *sphere)
 {
+  if (sphere == NULL)
+    return ray_pos;
+
   float a = dot_prod(dir, dir);
   float b = dot_prod(scale(dir, 2), add(ray_pos, scale(sphere->pos, -1)));
   float c = pow(distance(ray_pos,
