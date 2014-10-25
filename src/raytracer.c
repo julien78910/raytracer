@@ -58,9 +58,9 @@ s_color **ray_tracer(s_scene *scene)
 
       s_vec3 dir = compute(cam.pos, point);
 
-      s_plane *aux = scene->plane;
-      s_plane *closest = aux;
-      s_vec3 closest_inter = plane_intersec(dir, scene->camera.pos, aux);
+      s_sphere *aux = scene->sphere;
+      s_sphere *closest = aux;
+      s_vec3 closest_inter = sphere_intersec(dir, scene->camera.pos, point, aux);
       s_color color;
       color.r = 0;
       color.g = 0;
@@ -68,7 +68,7 @@ s_color **ray_tracer(s_scene *scene)
 
       while (aux != NULL)
       {
-        s_vec3 intersec = plane_intersec(dir, scene->camera.pos, aux);
+        s_vec3 intersec = sphere_intersec(dir, scene->camera.pos, point, aux);
      
         if (distance(intersec, point) < distance(closest_inter, point))
         {
@@ -81,12 +81,12 @@ s_color **ray_tracer(s_scene *scene)
       if (closest_inter.x != cam.pos.x || closest_inter.y != cam.pos.y
           || closest_inter.z != cam.pos.z)
       {
-        s_vec3 norm;
-        norm.x = closest->a;
-        norm.y = closest->b;
-        norm.z = closest->c;
+        //s_vec3 norm;
+        //norm.x = closest->a;
+        //norm.y = closest->b;
+        //norm.z = closest->c;
 
-        //s_vec3 norm = compute(closest->pos, closest_inter);
+        s_vec3 norm = compute(closest->pos, closest_inter);
         s_color dir_color = dir_light(scene->dlight, closest->spe, norm);
         s_color point_color = point_light(scene->plight, closest->spe, closest_inter, norm);
         s_color amb_color = ambient_light(scene->alight, closest->spe);
@@ -104,6 +104,18 @@ s_color **ray_tracer(s_scene *scene)
   return output;
 }
 
+/*
+void pixel_color(s_scene *scene)
+{
+  s_sphere *sphere = scene->sphere;
+  s_plane *plane = scene->plane;
+  s_triangle *triangle = scene->triangle;
+
+  s_vec3 clos_sphere = sphere_intersec(dir, scene->camera.pos, point, sphere);
+  s_vec3 clos_plane = plane_intersec(dir, scene->camera.pos, plane);
+  s_vec3 clos_triangle = triangle_intersec(dir, scene->camera.pos, triangle);
+}
+*/
 
 s_vec3 triangle_intersec(s_vec3 dir, s_vec3 ray_pos, s_triangle *triangle)
 {
@@ -188,18 +200,16 @@ s_color ambient_light(s_alight *alight, s_spe spe)
 {
   s_color amb_color;
 
-  if (alight == NULL)
+  amb_color.r = 0;
+  amb_color.g = 0;
+  amb_color.b = 0;
+
+  for (; alight; alight = alight->next)
   {
-    amb_color.r = 0;
-    amb_color.g = 0;
-    amb_color.b = 0;
-
-    return amb_color;
+    amb_color.r += ((alight->color.r / 255) * spe.color.r);
+    amb_color.g += ((alight->color.g / 255) * spe.color.g);
+    amb_color.b += ((alight->color.b / 255) * spe.color.b);
   }
-
-  amb_color.r = (alight->color.r / 255) * spe.color.r;
-  amb_color.g = (alight->color.g / 255) * spe.color.g;
-  amb_color.b = (alight->color.b / 255) * spe.color.b;
 
   return amb_color;
 }
@@ -209,22 +219,21 @@ s_color dir_light(s_dlight *dlight, s_spe spe, s_vec3 normal)
 {
   s_color color;
 
-  if (dlight == NULL)
+  color.r = 0;
+  color.g = 0;
+  color.b = 0;
+
+  for (; dlight; dlight = dlight->next)
   {
-    color.r = 0;
-    color.g = 0;
-    color.b = 0;
-    return color;
+    float ld = dot_prod(normalize(scale(dlight->dir, -1)), normal) * spe.diff;
+
+    if (ld < 0)
+      ld = 0;
+
+    color.r += ((dlight->color.r / 255) * spe.color.r * ld);
+    color.g += ((dlight->color.g / 255) * spe.color.g * ld);
+    color.b += ((dlight->color.b / 255) * spe.color.b * ld);
   }
-
-  float ld = dot_prod(normalize(scale(dlight->dir, -1)), normal) * spe.diff;
- 
-  if (ld < 0)
-    ld = 0;
-
-  color.r = (dlight->color.r / 255) * spe.color.r * ld;
-  color.g = (dlight->color.g / 255) * spe.color.g * ld;
-  color.b = (dlight->color.b / 255) * spe.color.b * ld;
 
   return color;
 }
@@ -234,26 +243,25 @@ s_color point_light(s_plight *plight, s_spe spe, s_vec3 point, s_vec3 normal)
 {
   s_color color;
 
-  if (plight == NULL)
+  color.r = 0;
+  color.g = 0;
+  color.b = 0;
+
+  for (; plight; plight = plight->next)
   {
-    color.r = 0;
-    color.g = 0;
-    color.b = 0;
-    return color;
-  }
-
-  s_vec3 vec_light_obj = compute(point, plight->pos);
-  float ld = dot_prod(normalize(vec_light_obj), normal) * spe.diff;
-  float atten = 1 / distance(point, plight->pos);
-  ld *= atten;
+    s_vec3 vec_light_obj = compute(point, plight->pos);
+    float ld = dot_prod(normalize(vec_light_obj), normal) * spe.diff;
+    float atten = 1 / distance(point, plight->pos);
+    ld *= atten;
  
-  if (ld < 0)
-    ld = 0;
+    if (ld < 0)
+      ld = 0;
 
 
-  color.r = (plight->color.r / 255) * spe.color.r * ld;
-  color.g = (plight->color.g / 255) * spe.color.g * ld;
-  color.b = (plight->color.b / 255) * spe.color.b * ld;
+    color.r += ((plight->color.r / 255) * spe.color.r * ld);
+    color.g += ((plight->color.g / 255) * spe.color.g * ld);
+    color.b += ((plight->color.b / 255) * spe.color.b * ld);
+  }
 
   return color;
 }
