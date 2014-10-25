@@ -60,7 +60,7 @@ s_color **ray_tracer(s_scene *scene)
 
       s_sphere *aux = scene->sphere;
       s_sphere *closest = aux;
-      s_vec3 closest_inter = sphere_intersec(dir, scene, point, aux);
+      s_vec3 closest_inter = sphere_intersec(dir, scene->camera.pos, point, aux);
       s_color color;
       color.r = 0;
       color.g = 0;
@@ -68,7 +68,7 @@ s_color **ray_tracer(s_scene *scene)
 
       while (aux != NULL)
       {
-        s_vec3 intersec = sphere_intersec(dir, scene, point, aux);
+        s_vec3 intersec = sphere_intersec(dir, scene->camera.pos, point, aux);
      
         if (distance(intersec, point) < distance(closest_inter, point))
         {
@@ -110,43 +110,46 @@ s_vec3 plane_intersec(s_vec3 dir, s_vec3 ray_pos, s_plane *plane)
 
   float t0 = -(num / denum);
 
-  return add(ray_pos, scale(dir, t0));
+  if (t0 > 0)
+    return add(ray_pos, scale(dir, t0));
+
+  return ray_pos;
 }
 
 
-s_vec3 sphere_intersec(s_vec3 dir, s_scene *scene, s_vec3 point, s_sphere *obj)
+s_vec3 sphere_intersec(s_vec3 dir, s_vec3 ray_pos,
+    s_vec3 intersec, s_sphere *sphere)
 {
-  s_vec3 cam = scene->camera.pos;
-
   float a = dot_prod(dir, dir);
-  float b = dot_prod(scale(dir, 2), add(cam, scale(obj->pos, -1)));
-  float c = pow(distance(cam, scale(obj->pos, -1)), 2) - pow(obj->radius, 2);
+  float b = dot_prod(scale(dir, 2), add(ray_pos, scale(sphere->pos, -1)));
+  float c = pow(distance(ray_pos,
+        scale(sphere->pos, -1)), 2) - pow(sphere->radius, 2);
 
   float delta = b * b - 4 * a * c;
 
   if (delta < 0)
-    return cam;
+    return ray_pos;
 
   float t0 = (-b - sqrt(delta)) / (2 * a);
   float t1 = (-b + sqrt(delta)) / (2 * a);
   
-  s_vec3 p0 = add(cam, scale(dir, t0));
-  s_vec3 p1 = add(cam, scale(dir, t1));
+  s_vec3 p0 = add(ray_pos, scale(dir, t0));
+  s_vec3 p1 = add(ray_pos, scale(dir, t1));
 
   s_vec3 result = p0;
   s_vec3 aux = p1;
 
-  if (distance(p0, point) > distance(p1, point))
+  if (distance(p0, intersec) > distance(p1, intersec))
   {
     result = p1;
     aux = p0;
   }
   
-  if (dot_prod(point, result) < 0)
+  if (dot_prod(intersec, result) < 0)
   {
     result = aux;
-    if (dot_prod(point, result) < 0)
-      return cam;
+    if (dot_prod(intersec, result) < 0)
+      return ray_pos;
   }
 
   return result;
