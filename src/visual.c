@@ -22,9 +22,13 @@ void display(char *filename, s_color **color, s_screen screen)
       int r = color[j][i].r;
       int g = color[j][i].g;
       int b = color[j][i].b;
-      fprintf(f, "%d %d %d  ", r, g, b);
+      if (j < screen.width - 1)
+        fprintf(f, "%d %d %d  ", r, g, b);
+      else
+        fprintf(f, "%d %d %d", r, g, b);
     }
-    fprintf(f, "\n");
+    if (i < screen.height - 1)
+      fprintf(f, "\n");
   }
   fclose(f);
 }
