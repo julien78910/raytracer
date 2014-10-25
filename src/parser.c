@@ -289,6 +289,7 @@ s_scene *parse(char *filename)
   FILE *f = fopen(filename, "r");
   s_scene *scene = init_scene();
   char *buf = malloc(256);
+  char *aux = buf;
 
   for (buf = fgets(buf, 256, f); buf; buf = fgets(buf, 256, f))
   {
@@ -312,6 +313,7 @@ s_scene *parse(char *filename)
       scene->alight = fill_alight(scene, saveptr);
     free(saveptr);
   }
+  free(aux);
   fclose(f);
   return scene;
 }
