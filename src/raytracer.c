@@ -5,6 +5,7 @@
 #include "vector3.h"
 #include "raytracer.h"
 #include "visual.h"
+#include "destroyer.h"
 #include <stdio.h>
 
 int main(int argc, char *argv[])
@@ -17,6 +18,8 @@ int main(int argc, char *argv[])
   s_color **output = ray_tracer(scene);
 
   display(argv[2], output, scene->screen);
+
+  destroy_all(scene);
 
   return 0;
 }
@@ -67,16 +70,16 @@ s_color pixel_color(s_scene *scene, s_vec3 pixel)
   s_plane *pl = scene->plane;
   s_triangle *tr = scene->triangle;
 
-  s_vec3 clos_sphere = sphere_intersec(dir, scene->camera.pos, pixel, sphere);
-  s_vec3 clos_plane = plane_intersec(dir, scene->camera.pos, plane);
-  s_vec3 clos_triangle = triangle_intersec(dir, scene->camera.pos, triangle);
+  s_vec3 *clos_sphere = NULL;
+  s_vec3 *clos_plane = NULL;
+  s_vec3 *clos_triangle = NULL;
 
   while (sp != NULL)
   {
-    s_vec3 intersec = sphere_intersec(dir, scene->camera.pos, pixel, sp);
+    s_vec3 *intersec = sphere_intersec(dir, scene->camera.pos, pixel, sp);
 
-    if (!is_equal(intersec, scene->camera.pos)
-        && distance(intersec, pixel) < distance(clos_sphere, pixel))
+    if (!clos_sphere || (intersec
+        && distance(*intersec, pixel) < distance(*clos_sphere, pixel)))
     {
       sphere = sp;
       clos_sphere = intersec;
@@ -86,10 +89,10 @@ s_color pixel_color(s_scene *scene, s_vec3 pixel)
 
   while (pl != NULL)
   {
-    s_vec3 intersec = plane_intersec(dir, scene->camera.pos, pl);
+    s_vec3 *intersec = plane_intersec(dir, scene->camera.pos, pl);
 
-    if (!is_equal(intersec, scene->camera.pos)
-        && distance(intersec, pixel) < distance(clos_plane, pixel))
+    if (!clos_plane || (intersec
+          && distance(*intersec, pixel) < distance(*clos_plane, pixel)))
     {
       plane = pl;
       clos_plane = intersec;
@@ -99,10 +102,10 @@ s_color pixel_color(s_scene *scene, s_vec3 pixel)
 
   while (tr != NULL)
   {
-    s_vec3 intersec = triangle_intersec(dir, scene->camera.pos, tr);
+    s_vec3 *intersec = triangle_intersec(dir, scene->camera.pos, tr);
 
-    if (!is_equal(intersec, scene->camera.pos)
-        && distance(intersec, pixel) < distance(clos_triangle, pixel))
+    if (!clos_triangle || (intersec
+        && distance(*intersec, pixel) < distance(*clos_triangle, pixel)))
     {
       triangle = tr;
       clos_triangle = intersec;
@@ -110,9 +113,15 @@ s_color pixel_color(s_scene *scene, s_vec3 pixel)
     tr = tr->next;
   }
 
-  float dist_triangle = distance(clos_triangle, pixel);
-  float dist_plane = distance(clos_plane, pixel);
-  float dist_sphere = distance(clos_sphere, pixel);
+  float dist_triangle = INFINITY;
+  if (clos_triangle)
+    dist_triangle = distance(*clos_triangle, scene->camera.pos);
+  float dist_plane = INFINITY;
+  if (clos_plane)
+    dist_plane = distance(*clos_plane, scene->camera.pos);
+  float dist_sphere = INFINITY;
+  if (clos_sphere)
+    dist_sphere = distance(*clos_sphere, scene->camera.pos);
 
   s_spe spe;
   s_vec3 normal;
@@ -125,15 +134,15 @@ s_color pixel_color(s_scene *scene, s_vec3 pixel)
   if (sphere != NULL && dist_sphere < dist_triangle && dist_sphere < dist_plane)
   {
     spe = sphere->spe;
-    closest_inter = clos_sphere;
-    normal = compute(sphere->pos, clos_sphere);
+    closest_inter = *clos_sphere;
+    normal = compute(sphere->pos, *clos_sphere);
   }
 
   else if (plane != NULL
       && dist_plane < dist_sphere && dist_plane < dist_triangle)
   {
     spe = plane->spe;
-    closest_inter = clos_plane;
+    closest_inter = *clos_plane;
     normal.x = plane->a;
     normal.y = plane->b;
     normal.z = plane->c;
@@ -142,7 +151,7 @@ s_color pixel_color(s_scene *scene, s_vec3 pixel)
   else if (triangle != NULL)
   {
     spe = triangle->spe;
-    closest_inter = clos_triangle;
+    closest_inter = *clos_triangle;
     s_vec3 vec_ab = compute(triangle->a, triangle->b);
     s_vec3 vec_ac = compute(triangle->a, triangle->c);
     normal = cross_prod(vec_ab, vec_ac);
@@ -162,10 +171,10 @@ s_color pixel_color(s_scene *scene, s_vec3 pixel)
 }
 
 
-s_vec3 triangle_intersec(s_vec3 dir, s_vec3 ray_pos, s_triangle *triangle)
+s_vec3 *triangle_intersec(s_vec3 dir, s_vec3 ray_pos, s_triangle *triangle)
 {
   if (triangle == NULL)
-    return ray_pos;
+    return NULL;
 
   s_vec3 vec_ab = compute(triangle->a, triangle->b);
   s_vec3 vec_ac = compute(triangle->a, triangle->c);
@@ -183,47 +192,55 @@ s_vec3 triangle_intersec(s_vec3 dir, s_vec3 ray_pos, s_triangle *triangle)
   plane->spe = triangle->spe;
   plane->next = NULL;
 
-  s_vec3 result = plane_intersec(dir, ray_pos, plane);
-  float s = vec_ab.x * result.y - triangle->a.y * vec_ab.x
-    - result.x * vec_ab.y + vec_ab.y * triangle->a.x;
+  s_vec3 *result = plane_intersec(dir, ray_pos, plane);
+  
+  float s = vec_ab.x * result->y - triangle->a.y * vec_ab.x
+    - result->x * vec_ab.y + vec_ab.y * triangle->a.x;
   s /= (vec_ac.y * vec_ab.x - vec_ac.x * vec_ab.y);
 
-  float r = (result.x - triangle->a.x - s * vec_ac.x) / vec_ab.x;
+  float r = (result->x - triangle->a.x - s * vec_ac.x) / vec_ab.x;
 
   if (s >= 0 && s <= 1 && r >= 0 && r <= 1 && s + r >= 0 && s + r <= 1)
     return result;
 
-  return ray_pos;
+  return NULL;
 }
 
 
-s_vec3 plane_intersec(s_vec3 dir, s_vec3 ray_pos, s_plane *plane)
+s_vec3 *plane_intersec(s_vec3 dir, s_vec3 ray_pos, s_plane *plane)
 {
   if (plane == NULL)
-    return ray_pos;
+    return NULL;
 
   float denum = plane->a * dir.x + plane->b * dir.y + plane->c * dir.z;
 
   if (denum == 0)
-    return ray_pos;
+    return NULL;
 
   float num = plane->a * ray_pos.x + plane->b * ray_pos.y
     + plane->c * ray_pos.z + plane->d;
 
   float t0 = -(num / denum);
 
-  if (t0 > 0)
-    return add(ray_pos, scale(dir, t0));
+  if (t0 < 0)
+    return NULL;
+  
+  s_vec3 *result = malloc(sizeof (s_vec3));
+  s_vec3 aux = add(ray_pos, scale(dir, t0));
 
-  return ray_pos;
+  result->x = aux.x;
+  result->y = aux.y;
+  result->z = aux.z;
+
+  return result;
 }
 
 
-s_vec3 sphere_intersec(s_vec3 dir, s_vec3 ray_pos,
+s_vec3 *sphere_intersec(s_vec3 dir, s_vec3 ray_pos,
     s_vec3 intersec, s_sphere *sphere)
 {
   if (sphere == NULL)
-    return ray_pos;
+    return NULL;
 
   float a = dot_prod(dir, dir);
   float b = dot_prod(scale(dir, 2), add(ray_pos, scale(sphere->pos, -1)));
@@ -233,7 +250,7 @@ s_vec3 sphere_intersec(s_vec3 dir, s_vec3 ray_pos,
   float delta = b * b - 4 * a * c;
 
   if (delta < 0)
-    return ray_pos;
+    return NULL;
 
   float t0 = (-b - sqrt(delta)) / (2 * a);
   float t1 = (-b + sqrt(delta)) / (2 * a);
@@ -241,10 +258,13 @@ s_vec3 sphere_intersec(s_vec3 dir, s_vec3 ray_pos,
   s_vec3 p0 = add(ray_pos, scale(dir, t0));
   s_vec3 p1 = add(ray_pos, scale(dir, t1));
 
-  s_vec3 result = p0;
-
   if (distance(p0, intersec) > distance(p1, intersec))
-    result = p1;
+    p1 = p0;
+
+  s_vec3 *result = malloc(sizeof (s_vec3));
+  result->x = p0.x;
+  result->y = p0.y;
+  result->z = p0.z;
   
   return result;
 }
