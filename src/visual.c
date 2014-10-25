@@ -19,9 +19,9 @@ void display(char *filename, s_color **color, s_screen screen)
   {
     for (int j = 0; j < screen.width; j++)
     {
-      int r = output[j][i].r;
-      int g = output[j][i].g;
-      int b = output[j][i].b;
+      int r = color[j][i].r;
+      int g = color[j][i].g;
+      int b = color[j][i].b;
       fprintf(f, "%d %d %d  ", r, g, b);
     }
     fprintf(f, "\n");

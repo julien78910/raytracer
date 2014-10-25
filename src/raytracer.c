@@ -4,6 +4,7 @@
 #include "data.h"
 #include "vector3.h"
 #include "raytracer.h"
+#include "visual.h"
 #include <stdio.h>
 
 int main(int argc, char *argv[])
@@ -15,7 +16,7 @@ int main(int argc, char *argv[])
 
   s_color **output = ray_tracer(scene);
 
-  for (int i = 0; i < scene->screen.height; i++)
+/*  for (int i = 0; i < scene->screen.height; i++)
   {
     for (int j = 0; j < scene->screen.width; j++)
       printf("%d %d %d  ", (int)output[j][i].r, (int)output[j][i].g, (int)output[j][i].b);
@@ -23,6 +24,9 @@ int main(int argc, char *argv[])
   }
   if (output)
     return 1;
+*/
+
+  display(argv[2], output, scene->screen);
 
   return 0;
 }
@@ -36,8 +40,8 @@ s_color **ray_tracer(s_scene *scene)
   s_vec3 vec_v = normalize(cam.v);
   s_vec3 vec_w = cross_prod(vec_u, vec_v);
 
-  printf("P3\n");
-  printf("%d %d\n255\n", screen.width, screen.height);
+  //printf("P3\n");
+  //printf("%d %d\n255\n", screen.width, screen.height);
 
   float dist_l = (screen.width / 2) / tan(45.f / 2.f);
   s_vec3 center = add(cam.pos, scale(vec_w, dist_l));
