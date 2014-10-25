@@ -4,6 +4,7 @@
 #include "data.h"
 #include "vector3.h"
 #include "raytracer.h"
+#include <stdio.h>
 
 int main(int argc, char *argv[])
 {
@@ -12,11 +13,27 @@ int main(int argc, char *argv[])
 
   s_scene *scene = parse(argv[1]);
 
-  ray_tracer(scene);
+  s_color **output = ray_tracer(scene);
+
+  for (int i = 0; i < scene->screen.width; i++)
+  {
+    for (int j = 0; j < scene->screen.height; j++)
+    {
+      if (output[i][j].g == 255)
+      {
+        printf("\033[43");
+        printf("o");
+        printf("\033[0");
+      }
+
+      printf("o");
+    }
+    printf("\n");
+  }
 
 }
 
-s_color *ray_tracer(s_scene *scene)
+s_color **ray_tracer(s_scene *scene)
 {
   s_camera cam = scene->camera;
   s_screen screen = scene->screen;
@@ -28,7 +45,8 @@ s_color *ray_tracer(s_scene *scene)
   float dist_l = (screen.width / 2) / tan(45 / 2);
   s_vec3 center = add(cam.pos, scale(vec_w, dist_l));
 
-  s_color *output = malloc(screen.height * screen.width * sizeof (s_color));
+  s_color **output = malloc(screen.width * sizeof (s_color *));
+  *output = malloc(screen.height * sizeof (s_color));
 
   for (int w = -screen.width / 2; w < screen.width / 2; w++)
   {
@@ -56,7 +74,7 @@ s_color *ray_tracer(s_scene *scene)
         color.b = 0;
       }
       
-      output[w] = color;
+      output[w + screen.width / 2][h + screen.height / 2] = color;
     }
   }
 
@@ -67,7 +85,7 @@ s_color *ray_tracer(s_scene *scene)
 
 s_vec3 find_intersec(s_vec3 dir, s_scene *scene, s_vec3 point)
 {
-  s_sphere obj;
+  s_sphere obj = *(scene->sphere);
   s_vec3 cam = scene->camera.pos;
 
   float a = dot_prod(dir, dir);
