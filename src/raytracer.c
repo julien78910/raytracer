@@ -45,8 +45,12 @@ s_color **ray_tracer(s_scene *scene)
   float dist_l = (screen.width / 2) / tan(45 / 2);
   s_vec3 center = add(cam.pos, scale(vec_w, dist_l));
 
+  printf("center = (%f, %f, %f)\n", center.x, center.y, center.z);
+
   s_color **output = malloc(screen.width * sizeof (s_color *));
-  *output = malloc(screen.height * sizeof (s_color));
+
+  for (int i = 0; i < screen.width; i++)
+    output[i] = malloc(screen.height * sizeof (s_color));
 
   for (int w = -screen.width / 2; w < screen.width / 2; w++)
   {
