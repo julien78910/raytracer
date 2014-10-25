@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
   display(argv[2], output, scene->screen);
 
-  destroy_all(scene);
+  destroy_all(scene, output);
 
   return 0;
 }
