@@ -21,12 +21,13 @@ int main(int argc, char *argv[])
     {
       if (output[i][j].g == 255)
       {
-        printf("\033[43");
+        printf("\033[32m");
         printf("o");
-        printf("\033[0");
+        printf("\033[0m");
       }
 
-      printf("o");
+      else
+        printf("o");
     }
     printf("\n");
   }
@@ -45,7 +46,9 @@ s_color **ray_tracer(s_scene *scene)
   printf("u = (%f, %f, %f)\nv = (%f, %f, %f)\n", vec_u.x, vec_u.y, vec_u.z, vec_v.x, vec_v.y, vec_v.z);
   printf("w = (%f, %f, %f)\n", vec_w.x, vec_w.y, vec_w.z);
 
-  float dist_l = (screen.width / 2) / tan(3.14 / 8);
+  printf("width = %d\n", screen.width);
+
+  float dist_l = (screen.width / 2) / tan(45.f / 2.f);
   printf("L = %f\n", dist_l);
   s_vec3 center = add(cam.pos, scale(vec_w, dist_l));
 
@@ -74,8 +77,11 @@ s_color **ray_tracer(s_scene *scene)
       color.g = 0;
       color.b = 0;
 
-      if (intersec.x != cam.pos.x && intersec.y != cam.pos.y
-          && intersec.z != cam.pos.z)
+      //printf("%d: inter (%f, %f, %f)\n", w + screen.width / 2, intersec.x, intersec.y, intersec.z);
+      //printf("cam (%f, %f, %f)\n", cam.pos.x, cam.pos.y, cam.pos.z);
+
+      if (intersec.x != cam.pos.x || intersec.y != cam.pos.y
+          || intersec.z != cam.pos.z)
       {
         color.r = 0;
         color.g = 255;
@@ -113,6 +119,9 @@ s_vec3 find_intersec(s_vec3 dir, s_scene *scene, s_vec3 point)
 
   s_vec3 result = p0;
   s_vec3 aux = p1;
+
+  printf("delta = %f, t0 = %f, t1 = %f\n", delta, t0, t1);
+  printf("p0 = (%f, %f, %f)\np1 = (%f, %f, %f)\n", p0.x, p0.y, p0.z, p1.x, p1.y, p1.z);
 
   if (distance(p0, point) > distance(p1, point))
   {
