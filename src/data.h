@@ -5,6 +5,12 @@
 # include <stdlib.h>
 # include "vector3.h"
 
+typedef struct color
+{
+  float r;
+  float g;
+  float b;
+} s_color;
 
 typedef struct screen
 {
@@ -29,9 +35,7 @@ typedef struct sphere
   float  shin;
   float  refr;
   float  opac;
-  float color_r;
-  float color_g;
-  float color_b;
+  s_color color;
   struct sphere *next;
 } s_sphere;
 
@@ -47,9 +51,7 @@ typedef struct plane
   float shin;
   float refr;
   float opac;
-  float color_r;
-  float color_g;
-  float color_b;
+  s_color color;
   struct plane *next;
 } s_plane;
 
@@ -64,35 +66,27 @@ typedef struct triangle
   float shin;
   float refr;
   float opac;
-  float color_r;
-  float color_g;
-  float color_b;
+  s_color color;
   struct triangle *next;
 } s_triangle;
 
 typedef struct plight
 {
   s_vec3 pos;
-  float color_r;
-  float color_g;
-  float color_b;
+  s_color color;
   struct plight *next;
 } s_plight;
 
 typedef struct dlight
 {
   s_vec3 dir;
-  float color_r;
-  float color_g;
-  float color_b;
+  s_color color;
   struct dlight *next;
 } s_dlight;
 
 typedef struct alight
 {
-  float color_r;
-  float color_g;
-  float color_b;
+  s_color color;
   struct dlight *next;
 } s_alight;
 

@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
 }
 
-void ray_tracer(s_scene *scene)
+s_color *ray_tracer(s_scene *scene)
 {
   s_camera cam = scene->camera;
   s_screen screen = scene->screen;
@@ -28,6 +28,8 @@ void ray_tracer(s_scene *scene)
   float dist_l = (screen.width / 2) / tan(45 / 2);
   s_vec3 center = add(cam.pos, scale(vec_w, dist_l));
 
+  s_color *output = malloc(screen.height * screen.width * sizeof (s_color));
+
   for (int w = -screen.width / 2; w < screen.width / 2; w++)
   {
     for (int h = -screen.height / 2; h < screen.height / 2; h++)
@@ -38,12 +40,30 @@ void ray_tracer(s_scene *scene)
       point.z = center.z;
 
       s_vec3 dir = compute(cam.pos, point);
-      
       s_vec3 intersec = find_intersec(dir, scene, point);
-      intersec = intersec;
+      
+
+      s_color color;
+      color.r = 0;
+      color.g = 0;
+      color.b = 0;
+
+      if (intersec.x != cam.pos.x && intersec.y != cam.pos.y
+          && intersec.z != cam.pos.z)
+      {
+        color.r = 0;
+        color.g = 255;
+        color.b = 0;
+      }
+      
+      output[w] = color;
     }
   }
+
+  return output;
 }
+
+
 
 s_vec3 find_intersec(s_vec3 dir, s_scene *scene, s_vec3 point)
 {
