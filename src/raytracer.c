@@ -15,10 +15,10 @@ int main(int argc, char *argv[])
 
   s_color **output = ray_tracer(scene);
 
-  for (int i = 0; i < scene->screen.width; i++)
+  for (int i = 0; i < scene->screen.height; i++)
   {
-    for (int j = 0; j < scene->screen.height; j++)
-      printf("%d %d %d  ", (int)output[i][j].r, (int)output[i][j].g, (int)output[i][j].b);
+    for (int j = 0; j < scene->screen.width; j++)
+      printf("%d %d %d  ", (int)output[j][i].r, (int)output[j][i].g, (int)output[j][i].b);
     printf("\n");
   }
   if (output)
@@ -37,7 +37,7 @@ s_color **ray_tracer(s_scene *scene)
   s_vec3 vec_w = cross_prod(vec_u, vec_v);
 
   printf("P3\n");
-  printf("%d %d\n255\n", screen.height, screen.width);
+  printf("%d %d\n255\n", screen.width, screen.height);
 
   float dist_l = (screen.width / 2) / tan(45.f / 2.f);
   s_vec3 center = add(cam.pos, scale(vec_w, dist_l));
@@ -58,9 +58,9 @@ s_color **ray_tracer(s_scene *scene)
 
       s_vec3 dir = compute(cam.pos, point);
 
-      s_sphere *aux = scene->sphere;
-      s_sphere *closest = aux;
-      s_vec3 closest_inter = sphere_intersec(dir, scene->camera.pos, point, aux);
+      s_plane *aux = scene->plane;
+      s_plane *closest = aux;
+      s_vec3 closest_inter = plane_intersec(dir, scene->camera.pos, aux);
       s_color color;
       color.r = 0;
       color.g = 0;
@@ -68,7 +68,7 @@ s_color **ray_tracer(s_scene *scene)
 
       while (aux != NULL)
       {
-        s_vec3 intersec = sphere_intersec(dir, scene->camera.pos, point, aux);
+        s_vec3 intersec = plane_intersec(dir, scene->camera.pos, aux);
      
         if (distance(intersec, point) < distance(closest_inter, point))
         {
@@ -81,7 +81,12 @@ s_color **ray_tracer(s_scene *scene)
       if (closest_inter.x != cam.pos.x || closest_inter.y != cam.pos.y
           || closest_inter.z != cam.pos.z)
       {
-        s_vec3 norm = compute(closest->pos, closest_inter);
+        s_vec3 norm;
+        norm.x = closest->a;
+        norm.y = closest->b;
+        norm.z = closest->c;
+
+        //s_vec3 norm = compute(closest->pos, closest_inter);
         s_color dir_color = dir_light(scene->dlight, closest->spe, norm);
         s_color point_color = point_light(scene->plight, closest->spe, closest_inter, norm);
         s_color amb_color = ambient_light(scene->alight, closest->spe);
