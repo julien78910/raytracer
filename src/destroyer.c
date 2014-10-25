@@ -77,10 +77,17 @@ static void destroy_alight(s_alight *alight)
   }
 }
 
+static void destroy_output(s_screen screen, s_color **output)
+{
+   for (int i = 0; i < screen.width; i++)
+    free(output[i]);
+
+   free(output);
+}
 /**
 ** Destroy the whole scene.
 */
-void destroy_all(s_scene *scene)
+void destroy_all(s_scene *scene, s_color **output)
 {
   destroy_sphere(scene->sphere);
   destroy_plane(scene->plane);
@@ -88,6 +95,7 @@ void destroy_all(s_scene *scene)
   destroy_plight(scene->plight);
   destroy_dlight(scene->dlight);
   destroy_alight(scene->alight);
+  destroy_output(scene->screen, output);
   free(scene);
 }
 

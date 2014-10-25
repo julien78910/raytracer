@@ -6,6 +6,6 @@
 # include "data.h"
 # include "vector3.h"
 
-void destroy_all(s_scene *scene);
+void destroy_all(s_scene *scene, s_color **output);
 
 #endif /* !DESTROYER_H */
