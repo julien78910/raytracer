@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include "vector3.h"
 
+/**
+** Add 2 vector3 together.
+*/
 s_vec3 add(s_vec3 v1, s_vec3 v2)
 {
   s_vec3 new;
@@ -10,6 +13,9 @@ s_vec3 add(s_vec3 v1, s_vec3 v2)
   return new;
 }
 
+/**
+** Get scale of the vector3 with a precise float.
+*/
 s_vec3 scale(s_vec3 v, float c)
 {
   s_vec3 new;
@@ -19,11 +25,17 @@ s_vec3 scale(s_vec3 v, float c)
   return new;
 }
 
+/**
+** Return the product between two points.
+*/
 float dot_prod(s_vec3 v1, s_vec3 v2)
 {
   return (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z);
 }
 
+/**
+** Return the cross product between two vector3.
+*/
 s_vec3 cross_prod(s_vec3 v1, s_vec3 v2)
 {
   s_vec3 new;

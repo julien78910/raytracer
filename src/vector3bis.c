@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include "vector3.h"
 
+/**
+**  Normalize the vector put in argument.
+*/
 s_vec3 normalize(s_vec3 v)
 {
   s_vec3 new;
@@ -11,11 +14,17 @@ s_vec3 normalize(s_vec3 v)
   return new;
 }
 
+/**
+** Return the distance between 2 points of the space.
+*/
 float distance(s_vec3 d1, s_vec3 d2)
 {
   return sqrt(pow(d1.x - d2.x, 2) + pow(d1.y - d2.y, 2) + pow(d1.z - d2.z, 2));
 }
 
+/**
+**  Compute 2 points in the space into a single vector3.
+*/
 s_vec3 compute(s_vec3 d1, s_vec3 d2)
 {
   s_vec3 new;
@@ -25,6 +34,9 @@ s_vec3 compute(s_vec3 d1, s_vec3 d2)
   return new;
 }
 
+/**
+** Return 1 if the two vectors3 are equals. 0 if they are not.
+*/
 int is_equal(s_vec3 v1, s_vec3 v2)
 {
   if ((v1.x == v2.x) && (v1.y == v2.y) && (v1.z == v2.z))

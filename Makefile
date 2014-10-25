@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS= -std=c99 -pedantic -Werror -Wall -Wextra
 BIN=rt
-SRC=src/raytracer.c src/vector3.c src/vector3bis.c src/parser.c src/visual.c
+SRC=src/raytracer.c src/vector3.c src/vector3bis.c src/parser.c src/visual.c src/destroyer.c
 OBJS=$(SRC:.c=.o)
 LDFLAGS=-lm
 
