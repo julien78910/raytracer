@@ -60,7 +60,7 @@ s_color **ray_tracer(s_scene *scene)
 
       s_sphere *aux = scene->sphere;
       s_sphere *closest = aux;
-      s_vec3 closest_inter = find_intersec(dir, scene, point, aux);
+      s_vec3 closest_inter = sphere_intersec(dir, scene, point, aux);
       s_color color;
       color.r = 0;
       color.g = 0;
@@ -98,6 +98,20 @@ s_color **ray_tracer(s_scene *scene)
   return output;
 }
 
+s_vec3 plane_intersec(s_vec3 dir, s_vec3 ray_pos, s_plane *plane)
+{
+  float denum = plane->a * dir.x + plane->b * dir.x + plane->c * dir.x;
+
+  if (denum == 0)
+    return ray_pos;
+
+  float num = plane->a * ray_pos.x + plane->b * ray_pos.y
+    + plane->c * ray_pos.z + plane->d;
+
+  float t0 = -(num / denum);
+
+  return add(ray_pos, scale(dir, t0));
+}
 
 
 s_vec3 sphere_intersec(s_vec3 dir, s_scene *scene, s_vec3 point, s_sphere *obj)
@@ -200,9 +214,9 @@ s_color point_light(s_scene *scene, s_sphere *obj, s_vec3 point)
   }
 
   s_vec3 normal = normalize(compute(obj->pos, point));
-  s_vec3 vec_light_obj = compute(obj->pos, plight->pos);
+  s_vec3 vec_light_obj = compute(point, plight->pos);
   float ld = dot_prod(normalize(vec_light_obj), normal) * obj->diff;
-  float atten = 1 / distance(obj->pos, plight->pos);
+  float atten = 1 / distance(point, plight->pos);
   ld *= atten;
  
   if (ld < 0)
