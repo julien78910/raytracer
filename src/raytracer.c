@@ -157,7 +157,12 @@ s_color pixel_color(s_scene *scene, s_vec3 pixel)
     normal = cross_prod(vec_ab, vec_ac);
   }
   else
+  {
+    free(clos_triangle);
+    free(clos_sphere);
+    free(clos_plane);
     return color;
+  }
 
   s_color dir_color = dir_light(scene->dlight, spe, normal);
   s_color point_color = point_light(scene->plight, spe, closest_inter, normal);
@@ -166,6 +171,10 @@ s_color pixel_color(s_scene *scene, s_vec3 pixel)
   color.r = amb_color.r + dir_color.r + point_color.r;
   color.g = amb_color.g + dir_color.g + point_color.g;
   color.b = amb_color.b + dir_color.b + point_color.b;
+  
+  free(clos_triangle);
+  free(clos_sphere);
+  free(clos_plane);
 
   return color;
 }
