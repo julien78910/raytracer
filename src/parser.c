@@ -6,7 +6,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-
+/**
+** Fill the structure screen contained in the line saveptr.
+*/
 static s_screen fill_screen(char **saveptr)
 {
   char *bf = strtok_r(NULL, " ", saveptr);
@@ -17,6 +19,9 @@ static s_screen fill_screen(char **saveptr)
   return scr;
 }
 
+/**
+** Fill the structure camera contained in the line saveptr.
+*/
 static s_camera fill_camera(char **saveptr)
 {
   char *bf = strtok_r(NULL, " ", saveptr);
@@ -41,6 +46,36 @@ static s_camera fill_camera(char **saveptr)
   return came;
 }
 
+s_spe fill_spe(char **saveptr)
+{
+  s_spe spe;
+  char *bf = strtok_r(NULL, " ", saveptr);
+  spe.diff =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  spe.refl =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  spe.spec =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  spe.shin =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  spe.refr =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  spe.opac =  strtof(bf, NULL);
+  s_color col;
+  bf = strtok_r(NULL, " ", saveptr);
+  col.r =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  col.g =  strtof(bf, NULL);
+  bf = strtok_r(NULL, " ", saveptr);
+  col.b =  strtof(bf, NULL);
+  spe.color = col;
+  return spe;
+}
+
+/**
+** Fill a new struct sphere which will be at the last position in the list
+** of spheres.
+*/
 s_sphere *fill_sphere(s_scene *sc, char **saveptr)
 {
   s_sphere *sp = sc->sphere;
@@ -58,26 +93,7 @@ s_sphere *fill_sphere(s_scene *sc, char **saveptr)
   new->pos.y =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
   new->pos.z =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.diff =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.refl =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.spec =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.shin =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.refr =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.opac =  strtof(bf, NULL);
-  s_color col;
-  bf = strtok_r(NULL, " ", saveptr);
-  col.r =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  col.g =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  col.b =  strtof(bf, NULL);
-  new->spe.color = col;
+  new->spe = fill_spe(saveptr);
   new->next = NULL;
   if (sp)
     sp->next = new;
@@ -86,15 +102,15 @@ s_sphere *fill_sphere(s_scene *sc, char **saveptr)
   return sc->sphere;
 }
 
+/**
+** Fill a new struct triangle which will be at the last position in the list
+** of triangles.
+*/
 s_triangle *fill_triangle(s_scene *sc, char **saveptr)
 {
   s_triangle *sp = sc->triangle;
   char *bf = strtok_r(NULL, " ", saveptr);
-  if (sc->triangle)
-  {
-    while (sp->next)
-      sp = sp->next;
-  }
+  for (; sp && sp->next; sp = sp->next);
   s_triangle *new = malloc(sizeof (s_triangle));
   new->a.x = strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
@@ -113,34 +129,16 @@ s_triangle *fill_triangle(s_scene *sc, char **saveptr)
   new->c.y =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
   new->c.z =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.diff =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.refl =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.spec =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.shin =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.refr =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.opac =  strtof(bf, NULL);
-  s_color col;
-  bf = strtok_r(NULL, " ", saveptr);
-  col.r =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  col.g =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  col.b =  strtof(bf, NULL);
-  new->spe.color = col;
+  new->spe = fill_spe(saveptr);
   new->next = NULL;
-  if (sp)
-    sp->next = new;
-  else
-    return new;
+  sp != NULL ? (sp->next = new) : (sc->triangle = new);
   return sc->triangle;
 }
 
+/**
+** Fill a new struct plane which will be at the last position in the list
+** of planes.
+*/
 s_plane *fill_plane(s_scene *sc, char **saveptr)
 {
   s_plane *sp = sc->plane;
@@ -158,26 +156,7 @@ s_plane *fill_plane(s_scene *sc, char **saveptr)
   new->c =  strtof(bf, NULL);
   bf = strtok_r(NULL, " ", saveptr);
   new->d =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.diff =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.refl =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.spec =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.shin =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.refr =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  new->spe.opac =  strtof(bf, NULL);
-  s_color col;
-  bf = strtok_r(NULL, " ", saveptr);
-  col.r =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  col.g =  strtof(bf, NULL);
-  bf = strtok_r(NULL, " ", saveptr);
-  col.b =  strtof(bf, NULL);
-  new->spe.color = col;
+  new->spe = fill_spe(saveptr);
   new->next = NULL;
   if (sp)
     sp->next = new;
@@ -186,6 +165,10 @@ s_plane *fill_plane(s_scene *sc, char **saveptr)
   return sc->plane;
 }
 
+/**
+** Fill a new struct plights which will be at the last position in the list
+** of plights.
+*/
 s_plight *fill_plight(s_scene *sc, char **saveptr)
 {
   s_plight *sp = sc->plight;
@@ -217,6 +200,10 @@ s_plight *fill_plight(s_scene *sc, char **saveptr)
   return sc->plight;
 }
 
+/**
+** Fill a new struct dlight which will be at the last position in the list
+** of dlight.
+*/
 s_dlight *fill_dlight(s_scene *sc, char **saveptr)
 {
   s_dlight *sp = sc->dlight;
@@ -248,6 +235,10 @@ s_dlight *fill_dlight(s_scene *sc, char **saveptr)
   return sc->dlight;
 }
 
+/**
+** Fill a new struct alight which will be at the last position in the list
+** of alight.
+*/
 s_alight *fill_alight(s_scene *sc, char **saveptr)
 {
   s_alight *sp = sc->alight;
@@ -273,56 +264,38 @@ s_alight *fill_alight(s_scene *sc, char **saveptr)
   return sc->alight;
 }
 
+/**
+** Main function of parsing the file name "pathname".
+** This file must be correct.
+** It will fill all the struct that the input wants.
+*/
 s_scene *parse(char *filename)
 {
   FILE *f = fopen(filename, "r");
   s_scene *scene = malloc(sizeof (s_scene));
-  scene->sphere = NULL;
-  int size = 1000;
-  char *buf = malloc(1000);;
-  buf = fgets(buf, size, f);
+  int size = 256;
+  char *buf = malloc(size);;
 
-
-  while (buf)
+  for (buf = fgets(buf, size, f); buf; buf = fgets(buf, size, f))
   {
-    char **saveptr = malloc(1000);;
-
+    char **saveptr = malloc(size);
     char *type = strtok_r(buf, " ", saveptr);
-
     if (!strcmp(type, "screen"))
-    {
       scene->screen = fill_screen(saveptr);
-    }
     else if (!strcmp(type, "camera"))
-    {
       scene->camera = fill_camera(saveptr);
-    }
     else if (!strcmp(type, "sphere"))
-    {
       scene->sphere = fill_sphere(scene, saveptr);
-    }
     else if (!strcmp(type, "plane"))
-    {
       scene->plane = fill_plane(scene, saveptr);
-    }
     else if (!strcmp(type, "triangle"))
-    {
       scene->triangle = fill_triangle(scene, saveptr);
-    }
     else if (!strcmp(type, "plight"))
-    {
       scene->plight = fill_plight(scene, saveptr);
-    }
     else if (!strcmp(type, "dlight"))
-    {
       scene->dlight = fill_dlight(scene, saveptr);
-    }
     else if (!strcmp(type, "alight"))
-    {
       scene->alight = fill_alight(scene, saveptr);
-    }
-    buf = fgets(buf, size, f);
-
   }
 
   fclose(f);
