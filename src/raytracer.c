@@ -42,7 +42,11 @@ s_color **ray_tracer(s_scene *scene)
   s_vec3 vec_v = normalize(cam.v);
   s_vec3 vec_w = cross_prod(vec_u, vec_v);
 
-  float dist_l = (screen.width / 2) / tan(45 / 2);
+  printf("u = (%f, %f, %f)\nv = (%f, %f, %f)\n", vec_u.x, vec_u.y, vec_u.z, vec_v.x, vec_v.y, vec_v.z);
+  printf("w = (%f, %f, %f)\n", vec_w.x, vec_w.y, vec_w.z);
+
+  float dist_l = (screen.width / 2) / tan(3.14 / 8);
+  printf("L = %f\n", dist_l);
   s_vec3 center = add(cam.pos, scale(vec_w, dist_l));
 
   printf("center = (%f, %f, %f)\n", center.x, center.y, center.z);
