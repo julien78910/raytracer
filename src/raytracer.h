@@ -1,14 +1,18 @@
 #ifndef RAY_TRACER_H
 # define RAY_TRACER_H
 
-s_color **ray_tracer(s_scene *scene);
-s_color dir_light(s_dlight *dlight, s_spe spe, s_vec3 normal);
-s_color point_light(s_plight *plight, s_spe spe, s_vec3 point, s_vec3 normal);
-s_color ambient_light(s_alight *alight, s_spe spe);
-s_vec3 *plane_intersec(s_vec3 dir, s_vec3 ray_pos, s_plane *plane);
-s_vec3 *sphere_intersec(s_vec3 dir, s_vec3 ray_pos,
-    s_vec3 intersec, s_sphere *sphere);
-s_vec3 *triangle_intersec(s_vec3 dir, s_vec3 ray_pos, s_triangle *triangle);
-s_color pixel_color(s_scene *scene, s_vec3 pixel);
+static s_color **ray_tracer(s_scene *scene);
+static s_color pixel_color(s_scene *scene, s_vec3 pixel);
+/*static s_sphere *closest_sphere(s_scene *scene, s_vec3 pixel,
+    s_vec3 dir, s_vec3 **clos_sphere);
+static s_plane *closest_plane(s_scene *scene, s_vec3 pixel,
+    s_vec3 dir, s_vec3 **clos_plane);
+static s_triangle *closest_triangle(s_scene *scene, s_vec3 pixel,
+    s_vec3 dir, s_vec3 **clos_triangle);
+//static s_vec3 *closest_obj(s_sphere *sphere, s_plane *plane,
+  //  s_triangle *triangle, s_spe *spe);
+//static s_vec3 find_normal(s_sphere *sphere, s_plane *plane,
+  //  s_triangle *triangle, s_vec3 closest_point);
+//static s_color set_color(s_scene *sc, s_spe spe, s_vec3 nor, s_vec3 clos_inter);*/
 
 #endif /* !RAY_TRACER_H */
