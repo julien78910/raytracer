@@ -260,7 +260,7 @@ static s_color pixel_color(s_scene *scene, s_vec3 pixel)
   color.r = dir_color.r + point_color.r + amb_color.r * 0.8 + spec_light.r;
   color.g = dir_color.g + point_color.g + amb_color.g * 0.8 + spec_light.g;
   color.b = dir_color.b + point_color.b + amb_color.b * 0.8 + spec_light.b;
-  
+
   free(clos_triangle);
   free(clos_sphere);
   free(clos_plane);

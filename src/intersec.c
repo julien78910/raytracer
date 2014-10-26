@@ -22,7 +22,7 @@ s_vec3 *sphere_intersec(s_vec3 dir, s_vec3 ray_pos,
 
   float t0 = (-b - sqrt(delta)) / (2 * a);
   float t1 = (-b + sqrt(delta)) / (2 * a);
-  
+
   s_vec3 p0 = add(ray_pos, scale(dir, t0));
   s_vec3 p1 = add(ray_pos, scale(dir, t1));
 
@@ -33,7 +33,7 @@ s_vec3 *sphere_intersec(s_vec3 dir, s_vec3 ray_pos,
   result->x = p0.x;
   result->y = p0.y;
   result->z = p0.z;
-  
+
   return result;
 }
 
@@ -56,7 +56,7 @@ s_vec3 *plane_intersec(s_vec3 dir, s_vec3 ray_pos, s_plane *plane)
 
   if (t0 < 0)
     return NULL;
-  
+
   s_vec3 *result = malloc(sizeof (s_vec3));
   s_vec3 aux = add(ray_pos, scale(dir, t0));
 
@@ -91,7 +91,7 @@ s_vec3 *triangle_intersec(s_vec3 dir, s_vec3 ray_pos, s_triangle *triangle)
   plane->next = NULL;
 
   s_vec3 *result = plane_intersec(dir, ray_pos, plane);
- 
+
   if (result == NULL)
     return NULL;
 

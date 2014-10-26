@@ -123,9 +123,9 @@ s_color point_light(s_plight *plight, s_spe spe, s_vec3 point, s_vec3 normal)
   {
     s_vec3 vec_light_obj = compute(point, plight->pos);
     float ld = dot_prod(normal, normalize(vec_light_obj)) * spe.diff;
-    float atten = 1 / distance(point, plight->pos);
+    float atten = 1.f / distance(point, plight->pos);
     ld *= atten;
- 
+
     if (ld < 0)
       ld = 0;
 
@@ -143,7 +143,7 @@ s_color specular_lighting(s_vec3 norm, s_scene *sc, s_vec3 pixel, s_spe spe)
 {
   s_color result = specular_dlight(norm, sc, pixel, spe);
   s_color aux = specular_plight(norm, sc, pixel, spe);
-  
+
   result.r += aux.r;
   result.g += aux.g;
   result.b += aux.b;
