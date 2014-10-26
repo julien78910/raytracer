@@ -3,7 +3,7 @@
 
 static s_color **ray_tracer(s_scene *scene);
 static s_color pixel_color(s_scene *scene, s_vec3 pixel);
-/*static s_sphere *closest_sphere(s_scene *scene, s_vec3 pixel,
+static s_sphere *closest_sphere(s_scene *scene, s_vec3 pixel,
     s_vec3 dir, s_vec3 **clos_sphere);
 static s_plane *closest_plane(s_scene *scene, s_vec3 pixel,
     s_vec3 dir, s_vec3 **clos_plane);
