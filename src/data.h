@@ -96,4 +96,26 @@ typedef struct scene
   s_alight *alight;
 } s_scene;
 
+
+typedef struct vec9
+{
+  s_vec3 *sphere;
+  s_vec3 *plane;
+  s_vec3 *triangle;
+} s_vec9;
+
+
+typedef struct v3obj
+{
+  s_sphere *sphere;
+  s_plane *plane;
+  s_triangle *triangle;
+} s_v3obj;
+
+typedef struct v9obj
+{
+  s_vec9 clos_obj;
+  s_v3obj obj;
+} s_v9obj;
+
 #endif /* !DATA_H */
