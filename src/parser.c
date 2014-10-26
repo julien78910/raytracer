@@ -46,7 +46,7 @@ static s_camera fill_camera(char **saveptr)
   return came;
 }
 
-s_spe fill_spe(char **saveptr)
+static s_spe fill_spe(char **saveptr)
 {
   s_spe spe;
   char *bf = strtok_r(NULL, " ", saveptr);
@@ -76,7 +76,7 @@ s_spe fill_spe(char **saveptr)
 ** Fill a new struct sphere which will be at the last position in the list
 ** of spheres.
 */
-s_sphere *fill_sphere(s_scene *sc, char **saveptr)
+static s_sphere *fill_sphere(s_scene *sc, char **saveptr)
 {
   s_sphere *sp = sc->sphere;
   char *bf = strtok_r(NULL, " ", saveptr);
@@ -106,7 +106,7 @@ s_sphere *fill_sphere(s_scene *sc, char **saveptr)
 ** Fill a new struct triangle which will be at the last position in the list
 ** of triangles.
 */
-s_triangle *fill_triangle(s_scene *sc, char **saveptr)
+static s_triangle *fill_triangle(s_scene *sc, char **saveptr)
 {
   s_triangle *sp = sc->triangle;
   char *bf = strtok_r(NULL, " ", saveptr);
@@ -139,7 +139,7 @@ s_triangle *fill_triangle(s_scene *sc, char **saveptr)
 ** Fill a new struct plane which will be at the last position in the list
 ** of planes.
 */
-s_plane *fill_plane(s_scene *sc, char **saveptr)
+static s_plane *fill_plane(s_scene *sc, char **saveptr)
 {
   s_plane *sp = sc->plane;
   char *bf = strtok_r(NULL, " ", saveptr);
@@ -169,7 +169,7 @@ s_plane *fill_plane(s_scene *sc, char **saveptr)
 ** Fill a new struct plights which will be at the last position in the list
 ** of plights.
 */
-s_plight *fill_plight(s_scene *sc, char **saveptr)
+static s_plight *fill_plight(s_scene *sc, char **saveptr)
 {
   s_plight *sp = sc->plight;
   char *bf = strtok_r(NULL, " ", saveptr);
@@ -204,7 +204,7 @@ s_plight *fill_plight(s_scene *sc, char **saveptr)
 ** Fill a new struct dlight which will be at the last position in the list
 ** of dlight.
 */
-s_dlight *fill_dlight(s_scene *sc, char **saveptr)
+static s_dlight *fill_dlight(s_scene *sc, char **saveptr)
 {
   s_dlight *sp = sc->dlight;
   char *bf = strtok_r(NULL, " ", saveptr);
@@ -239,7 +239,7 @@ s_dlight *fill_dlight(s_scene *sc, char **saveptr)
 ** Fill a new struct alight which will be at the last position in the list
 ** of alight.
 */
-s_alight *fill_alight(s_scene *sc, char **saveptr)
+static s_alight *fill_alight(s_scene *sc, char **saveptr)
 {
   s_alight *sp = sc->alight;
   char *bf = strtok_r(NULL, " ", saveptr);

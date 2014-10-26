@@ -1,1 +1,18 @@
 RAYtracer : TO DO
+
+  -Create all the structures -> Done
+  -Parse input -> Done
+  -Write output -> Done
+  -Handle camera -> Done
+  -Handle sphere -> Done
+  -Handle ambient light -> Done
+  -Advanced camera -> Done
+  -Handle directional light -> done
+  -Handle point-like light -> Done
+  -Handle plane -> Done
+  -Handle triangle -> Done
+  -Handle shadow -> need to be done
+  -Handle specular lighting -> Done
+  -Handle reflection -> Need to be done
+  -Handle phong shading -> Done
+  -Bonus -> Need to be done
